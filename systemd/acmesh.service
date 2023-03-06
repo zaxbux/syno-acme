@@ -1,0 +1,10 @@
+[Unit]
+Description=Renew certificates using acme.sh
+After=network-online.target
+
+[Service]
+Type=oneshot
+# --home's argument should be where the acme.sh script resides.
+ExecStart=/usr/local/share/acme.sh/acme.sh --cron --home /usr/local/share/acme.sh
+
+SuccessExitStatus=0 2
