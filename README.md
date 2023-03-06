@@ -8,7 +8,7 @@ This implementation uses the `synowebapi` command to install and replace certifi
 
 Some of the other methods that I found relied on the HTTP API for DSM to install certificates.
 I often ran into issues with using the correct HTTP(S) ports, insecure HTTPS warnings, and 2FA interference.
-Since I'm always going to be renewing certificates directly on the NAS and not remotely, I don't need any of the DSM HTTP APIs to update and restart services. I also didn't want to setup an entire docker container just to renew a certificate. After analyzing the binaries and libraries used, I determined the necessary parameters to create certificates with the `synowebapi` command and wrote a custom `acme.sh` deploy hook.
+Since I'm always going to be renewing certificates directly on the NAS and not remotely, I don't need any of the DSM HTTP APIs to update and restart services. I also didn't want to setup an entire docker container just to renew a certificate. After analyzing the binary and libraries used, I determined the necessary parameters to create certificates with the `synowebapi` command and wrote a custom `acme.sh` deploy hook (based on the existing `synology_dsm` hook).
 
 # Install
 
