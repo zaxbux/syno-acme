@@ -3,3 +3,4 @@ Todo:
   ☐ acme.sh syslog
   ☐ automatic install
   ☐ synology package
+  ☐ synology notification api - send notification on renew success/fail
