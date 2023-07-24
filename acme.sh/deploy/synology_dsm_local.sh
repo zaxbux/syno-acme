@@ -49,15 +49,17 @@ synology_dsm_local_deploy() {
   fi
 
   _debug "Fetching certificates"
-  
+
   response=$(_syno_webapi_exec_jq '.data.certificates[]' $SYNO_WEBAPI_CORE_CERTICIATE_CRT 1 list)
   _debug3 response "$response"
 
   # Find by ID
+  # shellcheck disable=SC2016 # We need single quotes here
   _certificate=$(echo "$response" | ${JQ_BINARY} -r --arg ID "$DEPLOY_SYNO_Certificate" 'select(.id==$ID)')
 
   if [ -z "$_certificate" ]; then
     # Find by description
+    # shellcheck disable=SC2016 # We need single quotes here
     _certificate=$(echo "$response" | ${JQ_BINARY} -r --arg DESC "$DEPLOY_SYNO_Certificate" 'select(.desc==$DESC)')
 
     if [ -z "$_certificate" ]; then
@@ -76,7 +78,7 @@ synology_dsm_local_deploy() {
   else
     _debug2 "Certificate exists [id=$DEPLOY_SYNO_Certificate]"
   fi
-  
+
   if [ -n "$_certificate" ]; then
     _cid=$(echo "$_certificate" | ${JQ_BINARY} -r '.id')
     _cdefault=$(echo "$_certificate" | ${JQ_BINARY} -r '.is_default')
@@ -100,13 +102,13 @@ synology_dsm_local_deploy() {
   #params[as_default]="$_cdefault"
 
   if [ -n "$_certificate" ]; then
-    params+=( "id=\"$_cid\"" )
-    params+=( "desc=\"$_cdesc\"" )
+    params+=("id=\"$_cid\"")
+    params+=("desc=\"$_cdesc\"")
     #params[id]="$_cid"
   else
     if [ -n "$SYNO_DEPLOY_Create" ]; then
       #params+=( "desc=\"$(printf "%q" "$_cdesc")\"" )
-      params+=( "desc=\"$_cdesc\"" )
+      params+=("desc=\"$_cdesc\"")
       #params[desc]="$_cdesc"
     fi
   fi
@@ -120,7 +122,7 @@ synology_dsm_local_deploy() {
   #response="$(_syno_webapi_exec $SYNO_WEBAPI_CORE_CERTICIATE 1 import ${param_str})"
   response_status=$?
   _debug3 response "$response"
-  
+
   error_code=$(echo "$response" | ${JQ_BINARY} -r '.error.code')
 
   if [ 0 == $response_status ] && [ "null" == "$error_code" ]; then
@@ -139,18 +141,18 @@ synology_dsm_local_deploy() {
     return 0
   else
     case $error_code in
-      5510)
-        _err "synowebapi error [5510]: Illegal certificate file"
-        ;;
-      5511)
-        _err "synowebapi error [5511]: Illegal key file"
-        ;;
-      5512)
-        _err "synowebapi error [5512]: Illegal intermediate file"
-        ;;
-      *)
-        _err "Certificate import error [code=]"
-        ;;
+    5510)
+      _err "synowebapi error [5510]: Illegal certificate file"
+      ;;
+    5511)
+      _err "synowebapi error [5511]: Illegal key file"
+      ;;
+    5512)
+      _err "synowebapi error [5512]: Illegal intermediate file"
+      ;;
+    *)
+      _err "Certificate import error [code=]"
+      ;;
     esac
     return 1
   fi
@@ -169,9 +171,8 @@ _syno_webapi_exec() {
   shift 3
 
   local _response
-  _response="$(${SYNO_WEBAPI_BINARY} --exec-fastwebapi api="$_api" method="$_method" version="$_version" "$@")"
 
-  if [ 0 != $? ]; then
+  if ! _response="$(${SYNO_WEBAPI_BINARY} --exec-fastwebapi api="$_api" method="$_method" version="$_version" "$@")"; then
     _err "synowebapi error: $_response"
     return 1
   fi
@@ -179,7 +180,7 @@ _syno_webapi_exec() {
   local _success
   _success=$(echo "$_response" | ${JQ_BINARY} -r '.success')
   echo "$_response"
-  
+
   if [ "true" != "$_success" ]; then
     return 1
   fi
@@ -191,11 +192,11 @@ _syno_webapi_exec_jq() {
   shift 1
 
   local _response
-  _response="$(_syno_webapi_exec "$@")"
-  if [ 0 != $? ]; then
+  
+  if ! _response="$(_syno_webapi_exec "$@")"; then
     return 1
   fi
-  
+
   local _filtered
   _filtered=$(echo "$_response" | ${JQ_BINARY} -r "$_filter")
   echo "$_filtered"
