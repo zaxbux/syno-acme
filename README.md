@@ -36,3 +36,20 @@ Since I'm always going to be renewing certificates directly on the NAS and not r
     ```
     <acme.sh home>/acme.sh --cron --home <acme.sh home>
     ```
+
+### Notifications
+
+1.  Copy the [`acme.sh/notify/synonotify.sh`](./acme.sh/notify/synonotify.sh) script to the `notify` directory inside your `acme.sh` home directory.
+2.  Set a notification using the custom [notify](https://github.com/acmesh-official/acme.sh/wiki/notify) hook:
+
+    ```
+    acme.sh --set-notify --notify-hook synonotify
+    ```
+
+    Alternatively, `ssmtp` can be used (it will use the mail settings from DSM):
+
+    ```
+    export MAIL_BIN="/bin/ssmtp"
+    export MAIL_TO="you@example.com"
+    acme.sh --set-notify --notify-hook mail
+    ```
