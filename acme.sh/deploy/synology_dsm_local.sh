@@ -159,17 +159,14 @@ synology_dsm_local_deploy() {
 _syno_webapi_exec() {
   # API
   # Example: SYNO.API.Info
-  local _api="$1"; shift
+  local _api="$1"
   # Version
   # Example: 1
-  local _version="$2"; shift
+  local _version="$2"
   # Method
   # Example: query
-  local _method="$3"; shift
-  #shift 3
-  # Additional JSON parameters
-  #local _param=`echo "$@"`
-  #local _param=("$@")
+  local _method="$3"
+  shift 3
 
   local _response
   _response="$(${SYNO_WEBAPI_BINARY} --exec-fastwebapi api="$_api" method="$_method" version="$_version" "$@")"
